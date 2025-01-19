@@ -1,6 +1,6 @@
 ﻿using TrackingApi.Models;
 
-namespace TrackingApi.BackgroundJobs
+namespace TrackingApi.BackgroundJobs.Services
 {
     public interface IPttScraper
     {

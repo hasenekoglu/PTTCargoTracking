@@ -5,7 +5,7 @@ using TrackingApi.Data;
 using TrackingApi.Models;
 using TrackingApi.Models.DTOs;
 using TrackingApi.Services.Interfaces;
-using TrackingApi.BackgroundJobs;
+using TrackingApi.BackgroundJobs.Services;
 
 namespace TrackingApi.Services;
 

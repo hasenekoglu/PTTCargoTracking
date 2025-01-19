@@ -1,11 +1,17 @@
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
-using TrackingApi.BackgroundJobs;
+using TrackingApi.BackgroundJobs.Jobs;
+using TrackingApi.BackgroundJobs.Services;
 using TrackingApi.Data;
 using TrackingApi.Services;
 using TrackingApi.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHangfire(configuration => configuration
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(builder.Configuration.GetConnectionString("HangfireDB")));
+builder.Services.AddHangfireServer();
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("TrackingDB");
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -13,6 +19,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString);
 });
 
+builder.Services.AddScoped<ITrackingBackgroundJob, TrackingBackgroundJob>();
 builder.Services.AddScoped<ITrackingService, TrackingService>();
 builder.Services.AddHttpClient<IPttScraper, PttScraper>();
 
@@ -23,13 +30,20 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseHangfireDashboard();
+// Configure recurring job - every 10 seconds
+RecurringJob.AddOrUpdate<ITrackingBackgroundJob>(
+    "update-tracking-statuses",
+    job => job.UpdateAllTrackingStatuses(),
+    "*/10 * * * * *"); // Cron expression for every 10 seconds
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

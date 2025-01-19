@@ -1,7 +1,8 @@
 ﻿using HtmlAgilityPack;
+using System.Net;
 using TrackingApi.Models;
 
-namespace TrackingApi.BackgroundJobs;
+namespace TrackingApi.BackgroundJobs.Services;
 
 
 public class PttScraper : IPttScraper
@@ -35,14 +36,11 @@ public class PttScraper : IPttScraper
 
             // Takip sorgusu için POST isteği
             var response = await _httpClient.PostAsync("https://gonderitakip.ptt.gov.tr/Track/summaryResult", content);
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new Exception($"Tracking query failed: {response.StatusCode}");
-            }
-
             var htmlContent = await response.Content.ReadAsStringAsync();
-            var result = ParseTrackingPage(htmlContent);
-            
+
+
+            var result = ParseTrackingPage(htmlContent,trackingNumber);
+
             return result;
         }
         catch (Exception ex)
@@ -52,22 +50,30 @@ public class PttScraper : IPttScraper
         }
     }
 
-    private TrackingItem ParseTrackingPage(string html)
+    private TrackingItem ParseTrackingPage(string html,string trackingNumber)
     {
         var doc = new HtmlDocument();
         doc.LoadHtml(html);
-      
+
         var result = new TrackingItem()
         {
-            TrackingNumber = GetNodeText(doc, "//h8[contains(text(),'TAKİP NO')]/span"),
-            Status = GetNodeText(doc, "//div[@class='col-8']//span"),
+            TrackingNumber = string.IsNullOrEmpty(GetNodeText(doc, "//h8[contains(text(),'TAKİP NO')]/span")) 
+                ? trackingNumber 
+                : GetNodeText(doc, "//h8[contains(text(),'TAKİP NO')]/span"),
+            Status = WebUtility.HtmlDecode(GetNodeText(doc, "//div[@class='col-8']//span")),
             LastUpdate = DateTime.Now,
             Details = new List<TrackingDetail>()
         };
 
+        if (string.IsNullOrEmpty(result.Status))
+        {
+            result.Status = "Kayıt Bulunamadı";
+            return result;
+        }
+
         // Hareket tablosunu parse et
-        //var rows = doc.DocumentNode.SelectNodes("//table[@class='table']//tbody//tr");
-        var rows = doc.DocumentNode.SelectNodes("//div[contains(@class,'collapse')]//table//tbody//tr") 
+       
+        var rows = doc.DocumentNode.SelectNodes("//div[contains(@class,'collapse')]//table//tbody//tr")
                    ?? doc.DocumentNode.SelectNodes("//table[contains(@class,'table')]//tbody//tr");
         if (rows != null)
         {
@@ -78,11 +84,11 @@ public class PttScraper : IPttScraper
                 {
                     result.Details.Add(new TrackingDetail
                     {
-                        Date = ParseDateTime(cells[0].InnerText.Trim()),
-                        Operation = cells[1].InnerText.Trim(),
-                        Branch = cells[2].InnerText.Trim(),
-                        Location = cells[3].InnerText.Trim(),
-                        Description = cells[4].InnerText.Trim()
+                        Date = ParseDateTime(WebUtility.HtmlDecode(cells[0].InnerText.Trim())),
+                        Operation = WebUtility.HtmlDecode(cells[1].InnerText.Trim()),
+                        Branch = WebUtility.HtmlDecode(cells[2].InnerText.Trim()),
+                        Location = WebUtility.HtmlDecode(cells[3].InnerText.Trim()),
+                        Description = WebUtility.HtmlDecode(cells[4].InnerText.Trim())
                     });
                 }
             }
@@ -94,14 +100,14 @@ public class PttScraper : IPttScraper
     private string GetNodeText(HtmlDocument doc, string xpath)
     {
         var node = doc.DocumentNode.SelectSingleNode(xpath);
-        return node?.InnerText.Trim() ?? string.Empty;
+        return WebUtility.HtmlDecode(node?.InnerText.Trim() ?? string.Empty);
     }
 
     private DateTime ParseDateTime(string dateTimeStr)
     {
-        if (DateTime.TryParseExact(dateTimeStr, "dd/MM/yyyy - HH:mm:ss", 
-            System.Globalization.CultureInfo.InvariantCulture, 
-            System.Globalization.DateTimeStyles.None, 
+        if (DateTime.TryParseExact(dateTimeStr, "dd/MM/yyyy - HH:mm:ss",
+            System.Globalization.CultureInfo.InvariantCulture,
+            System.Globalization.DateTimeStyles.None,
             out DateTime result))
         {
             return result;
