@@ -12,8 +12,8 @@ using TrackingApi.Data;
 namespace TrackingApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250118222248_UpdatedModels")]
-    partial class UpdatedModels
+    [Migration("20250119151335_InitMig")]
+    partial class InitMig
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,7 +63,7 @@ namespace TrackingApi.Migrations
 
                     b.HasIndex("TrackingItemId");
 
-                    b.ToTable("TrackingDetail");
+                    b.ToTable("TrackingDetails");
                 });
 
             modelBuilder.Entity("TrackingApi.Models.TrackingItem", b =>

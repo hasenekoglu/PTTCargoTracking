@@ -6,18 +6,28 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TrackingApi.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdatedModels : Migration
+    public partial class InitMig : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "LastUpdated",
-                table: "TrackingItems",
-                newName: "LastUpdate");
+            migrationBuilder.CreateTable(
+                name: "TrackingItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TrackingNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastUpdate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TrackingItems", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
-                name: "TrackingDetail",
+                name: "TrackingDetails",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -32,9 +42,9 @@ namespace TrackingApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TrackingDetail", x => x.Id);
+                    table.PrimaryKey("PK_TrackingDetails", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TrackingDetail_TrackingItems_TrackingItemId",
+                        name: "FK_TrackingDetails_TrackingItems_TrackingItemId",
                         column: x => x.TrackingItemId,
                         principalTable: "TrackingItems",
                         principalColumn: "Id",
@@ -42,8 +52,8 @@ namespace TrackingApi.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_TrackingDetail_TrackingItemId",
-                table: "TrackingDetail",
+                name: "IX_TrackingDetails_TrackingItemId",
+                table: "TrackingDetails",
                 column: "TrackingItemId");
         }
 
@@ -51,12 +61,10 @@ namespace TrackingApi.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "TrackingDetail");
+                name: "TrackingDetails");
 
-            migrationBuilder.RenameColumn(
-                name: "LastUpdate",
-                table: "TrackingItems",
-                newName: "LastUpdated");
+            migrationBuilder.DropTable(
+                name: "TrackingItems");
         }
     }
 }

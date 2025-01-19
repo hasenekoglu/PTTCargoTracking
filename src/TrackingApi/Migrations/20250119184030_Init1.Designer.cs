@@ -12,8 +12,8 @@ using TrackingApi.Data;
 namespace TrackingApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250118230935_FixedModel")]
-    partial class FixedModel
+    [Migration("20250119184030_Init1")]
+    partial class Init1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

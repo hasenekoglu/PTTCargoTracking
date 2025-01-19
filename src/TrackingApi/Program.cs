@@ -9,7 +9,6 @@ using TrackingApi.Services.Interfaces;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHangfire(configuration => configuration
-    .UseRecommendedSerializerSettings()
     .UseSqlServerStorage(builder.Configuration.GetConnectionString("HangfireDB")));
 builder.Services.AddHangfireServer();
 // Add services to the container.
@@ -49,5 +48,17 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<AppDbContext>();
+    if (context.Database.GetPendingMigrations().Any())
+    {
+        context.Database.Migrate();
+    }
+}
+
 
 app.Run();
