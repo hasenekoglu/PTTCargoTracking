@@ -13,7 +13,9 @@ Bu proje, kargo takip sistemi olarak geliştirilmiştir. Aşağıdaki adımları
 ### 1. Hangfire Veritabanını Oluşturma
 1. Aşağıdaki komutu çalıştırarak bir SQL Server konteyneri oluşturun:
     ```bash
-    docker run --name HangfireDB -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=123456aA*' -p 51434:1433 -d mcr.microsoft.com/mssql/server:2019-latest
+
+    docker run --name HangfireDB -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=123456aA*' -p 51434:1433 --user root -d mcr.microsoft.com/mssql/server:2019-latest
+
     ```
 2. Konteynerin içine erişmek için şu komutu çalıştırın:
     ```bash
@@ -39,7 +41,7 @@ Bu proje, kargo takip sistemi olarak geliştirilmiştir. Aşağıdaki adımları
 ### 2. Tracking Veritabanını Oluşturma
 1. Aşağıdaki komutu çalıştırarak bir SQL Server konteyneri daha oluşturun:
     ```bash
-    docker run --name TrackingDB -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=123456aA*' -p 51433:1433 -d mcr.microsoft.com/mssql/server:2019-latest
+    docker run --name TrackingDB -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=123456aA*' -p 51433:1433 --user root -d mcr.microsoft.com/mssql/server:2019-latest
     ```
 2. Konteynerin içine erişmek için şu komutu çalıştırın:
     ```bash
