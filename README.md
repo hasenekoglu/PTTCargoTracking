@@ -56,7 +56,7 @@ Bu proje, kargo takip sistemi olarak geliştirilmiştir. Aşağıdaki adımları
 1. Bu GitHub reposunu klonlayın veya zip dosyasını indirip çıkartın.
 2. `src` klasörüne gidin. Örneğin:
     ```bash
-    cd \PTTCargoTracking-master\src
+     \PTTCargoTracking-master\src
     ```
 3. `Tracking.API` klasöründe terminali açın.
 4. Proje konteynerlerini oluşturmak için aşağıdaki komutları çalıştırın:
@@ -69,10 +69,5 @@ Bu proje, kargo takip sistemi olarak geliştirilmiştir. Aşağıdaki adımları
 
 ---
 
-## Notlar
-- Veritabanı ayarlarını projede düzenlemeniz gerekebilir. Bunun için `appsettings.json` dosyasını kontrol edin.
-- Herhangi bir sorun yaşarsanız lütfen logları kontrol edin ve Docker konteynerlerinin doğru çalıştığından emin olun.
-
----
 
 Bu adımları tamamladıktan sonra proje başarıyla çalışacaktır!
