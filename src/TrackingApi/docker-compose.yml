@@ -1,4 +1,24 @@
-﻿version: '3.8'
+﻿# # docker-compose.yml
+
+
+# services:
+#   trackingapi:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     ports:
+#       - "5000:80"
+#     environment:
+#       - ASPNETCORE_ENVIRONMENT=Development
+#       - ASPNETCORE_URLS=http://+:80
+#       - ConnectionStrings__TrackingDB=Server=host.docker.internal,51433;Database=TrackingDatabase;User=sa;Password=123456aA*;TrustServerCertificate=True
+#       - ConnectionStrings__HangfireDB=Server=host.docker.internal,51434;Database=HangfireDatabase;User=sa;Password=123456aA*;TrustServerCertificate=True
+#     extra_hosts:
+#       - "host.docker.internal:host-gateway"
+
+# networks:
+#   default:
+#     driver: bridge
 
 services:
   trackingapi:
@@ -6,27 +26,18 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "5060:7070"
+      - "5000:80" # Swagger ve API için
+      - "5001:5001" # (İhtiyaç varsa) Hangfire için ek port
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - TrackingDB=Server=localhost;Database=TrackingDB;User=sa;Password=123456aA*;TrustServerCertificate=True
-      - HangfireDB=Server=localhost;Database=HangfireDB;User=sa;Password=123456aA*;TrustServerCertificate=True
-    # depends_on:
-      # - trackingdb
-      # - hangfiredb
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__TrackingDB=Server=host.docker.internal,51433;Database=TrackingDatabase;User=sa;Password=123456aA*;TrustServerCertificate=True
+      - ConnectionStrings__HangfireDB=Server=host.docker.internal,51434;Database=HangfireDatabase;User=sa;Password=123456aA*;TrustServerCertificate=True
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - tracking_network
 
-  # trackingdb:
-  #   image: mcr.microsoft.com/mssql/server:2022-latest
-  #   environment:
-  #     - ACCEPT_EULA=Y
-  #     - SA_PASSWORD=123456aA*
-  #   ports:
-  #     - "51433:1433"
-
-  # hangfiredb:
-  #   image: mcr.microsoft.com/mssql/server:2022-latest
-  #   environment:
-  #     - ACCEPT_EULA=Y
-  #     - SA_PASSWORD=123456aA*
-  #   ports:
-  #     - "51434:1433"
+networks:
+  tracking_network:
+    driver: bridge

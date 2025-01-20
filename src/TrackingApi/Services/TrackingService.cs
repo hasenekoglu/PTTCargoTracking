@@ -44,7 +44,9 @@ public class TrackingService : ITrackingService
 
     public async Task<IEnumerable<TrackingItem>> GetAllTrackingItems()
     {
-        var trackingItems = await _context.TrackingItems.ToListAsync();
+          var trackingItems = await _context.TrackingItems
+        .Include(t => t.Details)
+        .ToListAsync();
         foreach (var item in trackingItems)
         {
             try
