@@ -98,7 +98,8 @@ Bu proje, kargo takip sistemi olarak geliştirilmiştir. Aşağıdaki adımları
 
 5. Proje ayağa kalktıktan sonra aşağıdaki URL'den Swagger arayüzüne erişebilirsiniz:
    [http://localhost:5000/swagger/index.html](http://localhost:5000/swagger/index.html)
-
+   
+Ornek Kargo Takip Numarasi: KP05239677900 
 ---
 
 Bu adımları tamamladıktan sonra proje başarıyla çalışacaktır!
