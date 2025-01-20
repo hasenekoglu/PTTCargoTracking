@@ -56,7 +56,7 @@ Bu proje, kargo takip sistemi olarak geliştirilmiştir. Aşağıdaki adımları
 1. Bu GitHub reposunu klonlayın veya zip dosyasını indirip çıkartın.
 2. `src` klasörüne gidin. Örneğin:
     ```bash
-    cd C:\Users\Selim\Desktop\PTTCargoTracking-master\src
+    cd \PTTCargoTracking-master\src
     ```
 3. `Tracking.API` klasöründe terminali açın.
 4. Proje konteynerlerini oluşturmak için aşağıdaki komutları çalıştırın:
